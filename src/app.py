@@ -1,10 +1,28 @@
 from flask import Flask
 
-app = Flask(__name__)
+from src import auth
+from src.config import Config
+from src.extensions import db
+from src.extensions import migrate
+from src.extensions import security
 
-@app.route('/')
-def home():
-	return "hello"
 
-if __name__ == "__main__":
-	app.run('0.0.0.0', 8000, debug=True)
+def create_app():
+	app = Flask(__name__)
+
+	app.config.from_object(Config())
+
+	register_blueprints(app)
+	register_extension(app)
+
+	return app
+
+
+def register_blueprints(app):
+	app.register_blueprint(auth.views.blueprint)
+
+
+def register_extension(app):
+	db.init_app(app)
+	migrate.init_app(app, db)
+	security.init_app(app)

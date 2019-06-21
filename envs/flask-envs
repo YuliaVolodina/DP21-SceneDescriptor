@@ -1,1 +1,8 @@
-export FLASK_APP="/app/src/app.py"
+set -a
+FLASK_DEBUG=1
+MYSQL_PORT=3306
+MYSQL_HOSTNAME=localhost:$MYSQL_PORT
+MYSQL_USERNAME=root
+MYSQL_PASSWORD=changeme
+MYSQL_DATABASE=db
+FLASK_APP=autoapp.py
