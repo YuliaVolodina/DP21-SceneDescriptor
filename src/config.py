@@ -12,6 +12,7 @@ class Config(object):
 	SECURITY_TRACKABLE = True
 	SECURITY_PASSWORD_SALT = 'something_super_secret_change_in_production'
 	SECURITY_TOKEN_MAX_AGE = 3600
+	SECRET_KEY = os.environ.get('SMARTY_SECRET', 'secret-key')
 
 	@property
 	def db_uri_fragments(self):

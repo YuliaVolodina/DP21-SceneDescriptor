@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 pymysql = "*"
 flask-security = "*"
+flask-login = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.6"

@@ -4,8 +4,11 @@ from flask_security.utils import logout_user
 from flask_security.utils import verify_password
 
 from src.domain.models import User
+from src.domain.models import user_datastore
 from src.extensions import db
 from src.auth.utils import user_to_dict
+
+import sys
 
 
 def register(body: dict) -> dict:
@@ -15,10 +18,10 @@ def register(body: dict) -> dict:
 	if _is_user(email):
 		raise Exception
 	else:
-		user = User(
+		user = user_datastore.create_user(
 			email=email,
-			password=password)
-		user.add()
+			password=password
+		)
 	db.session.commit()
 
 	return user_to_dict(user)
@@ -27,7 +30,7 @@ def register(body: dict) -> dict:
 def login(body: dict):
 	email = body['email']
 	password = body['password']
-	user = User.query.filter(User.email == email).first()
+	user = user_datastore.find_user(email=email)
 	verified = verify_password(password, user.password)
 	if verified:
 		auth_token = user.encode_auth_token(user.id)

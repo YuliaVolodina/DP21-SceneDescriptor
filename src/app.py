@@ -2,6 +2,7 @@ from flask import Flask
 
 from src import auth
 from src.config import Config
+from src.domain.models import user_datastore
 from src.extensions import db
 from src.extensions import migrate
 from src.extensions import security
@@ -25,4 +26,4 @@ def register_blueprints(app):
 def register_extension(app):
 	db.init_app(app)
 	migrate.init_app(app, db)
-	security.init_app(app)
+	security.init_app(app, user_datastore)
