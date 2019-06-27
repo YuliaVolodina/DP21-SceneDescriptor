@@ -14,3 +14,5 @@ docker-compose up --build
 ```
 
 from the root of the project. The api should now be running at the address: localhost:8000.
+
+Written by: GuyHomme hehe
