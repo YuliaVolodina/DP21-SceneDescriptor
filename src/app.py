@@ -1,6 +1,10 @@
+import redis
+from rq import Connection, Worker
+
 from flask import Flask
 
 from src import auth
+from src import tasks
 from src.config import Config
 from src.domain.models import user_datastore
 from src.extensions import db
@@ -16,11 +20,20 @@ def create_app():
 	register_blueprints(app)
 	register_extension(app)
 
+	@app.cli.command('run_worker')
+	def run_worker():
+		redis_url = app.config['REDIS_URL']
+		redis_connection = redis.from_url(redis_url)
+		with Connection(redis_connection):
+			worker = Worker(app.config['QUEUES'])
+			worker.work()
+
 	return app
 
 
 def register_blueprints(app):
 	app.register_blueprint(auth.views.blueprint)
+	app.register_blueprint(tasks.views.blueprint)
 
 
 def register_extension(app):

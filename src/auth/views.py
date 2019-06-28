@@ -25,9 +25,6 @@ def token_required(f):
 		else:
 			user = controller.get_user_by_id(user_id)
 
-		if not user.confirmed_at:
-			return jsonify({'message': 'Account not validated'}), 401
-
 		return f(user, *args, **kwargs)
 
 	return decorated
