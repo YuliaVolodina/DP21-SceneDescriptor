@@ -7,7 +7,7 @@ class Config(object):
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 	# Flask Security settings
-	WTF_CSRF_ENABLED = False
+	WTF_CSRF_ENABLED = True
 	SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
 	SECURITY_TRACKABLE = True
 	SECURITY_PASSWORD_SALT = 'something_super_secret_change_in_production'
@@ -47,3 +47,7 @@ class Config(object):
 			*[e[0] for e in self.db_uri_fragments])
 
 	SQLALCHEMY_DATABASE_URI: str = set_sqlalchemy_database_uri
+
+	# Redis settings
+	REDIS_URL = 'redis://redis:6379/0'
+	QUEUES = ['default']

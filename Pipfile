@@ -13,6 +13,8 @@ pymysql = "*"
 flask-security = "*"
 flask-login = "*"
 pyjwt = "*"
+redis = "*"
+rq = "*"
 
 [requires]
 python_version = "3.6"

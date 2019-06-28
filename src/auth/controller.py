@@ -8,8 +8,6 @@ from src.domain.models import user_datastore
 from src.extensions import db
 from src.auth.utils import user_to_dict
 
-import sys
-
 
 def register(body: dict) -> dict:
 	email = body['email']
