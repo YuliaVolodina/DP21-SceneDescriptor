@@ -4,6 +4,8 @@ from flask_security import RoleMixin
 from flask_security import Security
 from flask_security import SQLAlchemyUserDatastore
 from flask_login import UserMixin
+from sqlalchemy import CheckConstraint
+
 from src.extensions import db
 from src.domain.base import BaseModel
 
@@ -15,6 +17,20 @@ class Image(BaseModel):
 	caption = db.Column(db.String(128), nullable=False)
 
 
+class Rating(BaseModel):
+	__tablename__ = 'rating'
+	__table_args__ = (
+		db.PrimaryKeyConstraint('user_id', 'image_id'),
+	)
+	user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
+	image_id = db.Column(db.Integer(), db.ForeignKey('image.id'))
+	validity = db.Column(db.Integer(), CheckConstraint('1<=validity<=5'), nullable=False)
+	minimalist = db.Column(db.Integer(), CheckConstraint('1<=minimalist<=5'), nullable=False)
+	distinct_items = db.Column(db.Integer(), CheckConstraint('1<=distinct_items<=5'), nullable=False)
+	details = db.Column(db.Integer(), CheckConstraint('1<=details<=5'), nullable=False)
+	spatial_info = db.Column(db.Integer(), CheckConstraint('1<=spatial_info<=5'), nullable=False)
+
+
 class Role(BaseModel, RoleMixin):
 	__tablename__ = 'role'
 	id = db.Column(db.Integer(), primary_key=True)
@@ -24,13 +40,13 @@ class Role(BaseModel, RoleMixin):
 
 class User(BaseModel, UserMixin):
 	__tablename__ = 'user'
-	id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.Integer(), primary_key=True)
 	email = db.Column(db.String(128), index=True, unique=True, nullable=False)
 	username = db.Column(db.String(128), index=True, unique=True, nullable=False)
 	password = db.Column(db.String(256), nullable=False)
 	current_login_at = db.Column(db.DateTime())
 	current_login_ip = db.Column(db.String(100))
-	login_count = db.Column(db.Integer)
+	login_count = db.Column(db.Integer())
 
 	@staticmethod
 	def encode_auth_token(user_id):
