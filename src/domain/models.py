@@ -7,13 +7,26 @@ from flask_login import UserMixin
 from src.extensions import db
 from src.domain.base import BaseModel
 
-import sys
+
+class Image(BaseModel):
+	__tablename__ = 'image'
+	id = db.Column(db.Integer(), primary_key=True)
+	path = db.Column(db.String(256), nullable=False)
+	caption = db.Column(db.String(128), nullable=False)
+
+
+class Role(BaseModel, RoleMixin):
+	__tablename__ = 'role'
+	id = db.Column(db.Integer(), primary_key=True)
+	name = db.Column(db.String(80), unique=True)
+	description = db.Column(db.String(255))
 
 
 class User(BaseModel, UserMixin):
 	__tablename__ = 'user'
 	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(128), index=True, unique=True)
+	email = db.Column(db.String(128), index=True, unique=True, nullable=False)
+	username = db.Column(db.String(128), index=True, unique=True, nullable=False)
 	password = db.Column(db.String(256), nullable=False)
 	current_login_at = db.Column(db.DateTime())
 	current_login_ip = db.Column(db.String(100))
@@ -53,13 +66,6 @@ class User(BaseModel, UserMixin):
 			return 'Signature expired. Please log in again.'
 		except jwt.InvalidTokenError:
 			return 'Invalid token. Please log in again.'
-
-
-class Role(BaseModel, RoleMixin):
-	__tablename__ = 'role'
-	id = db.Column(db.Integer(), primary_key=True)
-	name = db.Column(db.String(80), unique=True)
-	description = db.Column(db.String(255))
 
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
