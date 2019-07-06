@@ -5,6 +5,7 @@ from flask import Flask
 
 from src import auth
 from src import tasks
+from src import urate
 from src.config import Config
 from src.domain.models import user_datastore
 from src.extensions import db
@@ -34,6 +35,7 @@ def create_app():
 def register_blueprints(app):
 	app.register_blueprint(auth.views.blueprint)
 	app.register_blueprint(tasks.views.blueprint)
+	app.register_blueprint(urate.views.blueprint)
 
 
 def register_extension(app):
