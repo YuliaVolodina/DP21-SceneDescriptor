@@ -16,3 +16,10 @@ def rating_to_dict(rating):
 		'details': rating.details,
 		'spatial_info': rating.spatial_info
 	}
+
+
+def rating_check(value):
+	if 1 <= value <= 5:
+		return True
+	else:
+		return False

@@ -11,7 +11,20 @@ from src.urate import utils
 
 blueprint = Blueprint('urate', __name__, url_prefix='/urate')
 
-# Image api
+
+@blueprint.route('/images', methods=['POST'])
+@token_required
+def post_images(current_user):
+	body = request.get_json()
+
+	image = controller.create_image(body)
+
+	if not image:
+		raise werkzeug.exceptions.NotFound
+
+	image_dict = utils.image_to_dict(image)
+
+	return jsonify(image_dict)
 
 
 @blueprint.route('/images', methods=['GET'])
@@ -72,7 +85,20 @@ def delete_image(current_user, image_id):
 	except DatabaseError:
 		return jsonify('Method Not Allowed'), 405
 
-# Rating api
+
+@blueprint.route('/ratings', methods=['POST'])
+@token_required
+def post_rating(current_user):
+	body = request.get_json()
+
+	rating = controller.create_rating(body)
+
+	if not rating:
+		return "Values out of range"
+
+	rating_dict = utils.rating_to_dict(rating)
+
+	return jsonify(rating_dict)
 
 
 @blueprint.route('/ratings/<int:image_id>/<int:user_id>', methods=['GET'])
@@ -83,9 +109,9 @@ def get_rating(current_user, image_id, user_id):
 	if not rating:
 		raise werkzeug.exceptions.NotFound
 
-	image_dict = utils.rating_to_dict(rating)
+	rating_dict = utils.rating_to_dict(rating)
 
-	return jsonify(image_dict)
+	return jsonify(rating_dict)
 
 
 @blueprint.route('/ratings/image/<int:image_id>/', methods=['GET'])
@@ -128,9 +154,9 @@ def patch_rating(current_user, image_id, user_id):
 	if not rating:
 		raise werkzeug.exceptions.NotFound
 
-	image_dict = utils.image_to_dict(rating)
+	rating_dict = utils.rating_to_dict(rating)
 
-	return jsonify(image_dict)
+	return jsonify(rating_dict)
 
 
 @blueprint.route('/ratings/<int:image_id>/<int:user_id>', methods=['DELETE'])

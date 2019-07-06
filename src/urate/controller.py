@@ -5,6 +5,19 @@ from typing import Optional
 from src.domain.models import Image
 from src.domain.models import Rating
 from src.extensions import db
+from src.urate import utils
+
+
+def create_image(payload: dict):
+	path = payload.get('path')
+	caption = payload.get('caption')
+
+	image = Image(path=path, caption=caption)
+
+	image.add()
+	db.session.commit()
+
+	return image
 
 
 def get_image(image_id: Optional[str] = None):
@@ -42,6 +55,39 @@ def delete_image(image_id):
 	except Exception:
 		db.session.rollback()
 		raise DatabaseError
+
+
+def create_rating(payload):
+	user_id = payload.get('user_id')
+	image_id = payload.get('image_id')
+	validity = payload.get('validity')
+	minimalist = payload.get('minimalist')
+	distinct_items = payload.get('distinct_items')
+	details = payload.get('details')
+	spatial_info = payload.get('spatial_info')
+
+	if utils.rating_check(validity) and \
+		utils.rating_check(minimalist) and \
+		utils.rating_check(distinct_items) and \
+		utils.rating_check(details) and \
+		utils.rating_check(spatial_info):
+
+		rating = Rating(
+			user_id=user_id,
+			image_id=image_id,
+			validity=validity,
+			minimalist=minimalist,
+			distinct_items=distinct_items,
+			details=details,
+			spatial_info=spatial_info
+		)
+
+		rating.add()
+		db.session.commit()
+
+		return rating
+	else:
+		return None
 
 
 def get_rating(image_id: Optional[str] = None, user_id: Optional[str] = None):
