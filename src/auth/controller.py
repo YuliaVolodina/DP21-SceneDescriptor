@@ -10,8 +10,9 @@ from src.auth.utils import user_to_dict
 
 
 def register(body: dict) -> dict:
-	email = body['email']
-	password = hash_password(body['password'])
+	email = body.get('email')
+	password = hash_password(body.get('password'))
+	username = body.get('username')
 
 	if _is_user(email):
 		raise Exception
@@ -26,8 +27,8 @@ def register(body: dict) -> dict:
 
 
 def login(body: dict):
-	email = body['email']
-	password = body['password']
+	email = body.get('email')
+	password = body.get('password')
 	user = user_datastore.find_user(email=email)
 	verified = verify_password(password, user.password)
 	if verified:

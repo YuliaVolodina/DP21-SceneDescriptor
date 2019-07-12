@@ -15,7 +15,7 @@ blueprint = Blueprint('tasks', __name__, url_prefix='/tasks')
 @blueprint.route('', methods=['POST'])
 @token_required
 def run_task(current_user):
-	task_type = request.form.get('type', 0)
+	task_type = request.get('type', 0)
 	with Connection(redis.from_url(Config.REDIS_URL)):
 		q = Queue()
 		task = q.enqueue(controller.create_task, task_type)
