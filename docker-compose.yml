@@ -1,10 +1,57 @@
 version: '3'
+
 services:
-  api:
-    build: .
-    command: "pipenv run flask run --host=0.0.0.0 --port=8000"
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./.env
-    container_name: flask_api
+
+    api:
+        build: .
+        command: "pipenv run flask run --host=0.0.0.0 --port=8000"
+        environment:
+            - MYSQL_HOSTNAME=db
+            - MYSQL_PASSWORD=changeme
+            - MYSQL_USERNAME=root
+            - MYSQL_DATABASE=db
+        ports:
+            - "8000:8000"
+        expose:
+            - '5000'
+        container_name: flask_api
+        depends_on:
+          - 'db'
+          - 'redis'
+
+    db:
+        image: mysql:5.7
+        restart: always
+        environment:
+            - MYSQL_PASSWORD=changeme
+            - MYSQL_USERNAME=root
+            - MYSQL_DATABASE=db
+            - MYSQL_ROOT_PASSWORD=changeme
+        ports:
+            - '3306:3306'
+        expose:
+            - '3306'
+        volumes:
+            - 'mysql_data:/var/lib/mysql'
+        container_name: mysql_db
+
+    worker:
+        build: .
+        command: "pipenv run flask run_worker"
+        environment:
+            - MYSQL_HOSTNAME=db
+            - MYSQL_PASSWORD=changeme
+            - MYSQL_USERNAME=root
+            - MYSQL_DATABASE=db
+        container_name: worker
+        depends_on:
+            - 'db'
+            - 'redis'
+
+    redis:
+        image: redis:4.0.11-alpine
+        container_name: redis
+
+volumes:
+  mysql_data:
+      driver: local
